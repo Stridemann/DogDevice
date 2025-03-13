@@ -95,11 +95,6 @@ void setup() {
   if (minHoursRedLed < 1 || minHoursRedLed > 10)
     minHoursRedLed = 4;
 
-  Serial.println(F("Start init display"));
-  display.begin(&Adafruit128x32, SCREEN_ADDRESS);
-  Serial.println(F("Start init display font"));
-  display.setFont(font8x8_90c);
-  Serial.println(F("Init display Success!"));
 
   // 74HC165 shift register
   pinMode(ISRDataPin, INPUT);
@@ -121,16 +116,12 @@ void setup() {
   }
   Serial.println(F("Init radio Success!"));
 
-  // if (!nrf24.init()) {
-  //   Serial.println(F("nrf24 init: Failed"));
-  //   return;
-  // }
 
-  // if (!nrf24.setChannel(8))  // Defaults after init are 2.402 GHz (channel 2), 2Mbps, 0dBm
-  // {
-  //   Serial.println(F("nrf24 setChannel: Failed"));
-  //   return;
-  // }
+  Serial.println(F("Start init display"));
+  display.begin(&Adafruit128x64, SCREEN_ADDRESS);
+  Serial.println(F("Start init display font"));
+  display.setFont(font8x8_90c);
+  Serial.println(F("Init display Success!"));
 
   if (powerMode >= 4) {
     powerMode = 0;
@@ -689,12 +680,12 @@ void DrawTimers() {
       display.print(' ');
       display.print(' ');
       //if (showSeconds) {
-        // display.print(':');
-        // if (iterTimer->seconds < 10)
-        //   display.print(' ');
+      // display.print(':');
+      // if (iterTimer->seconds < 10)
+      //   display.print(' ');
 
-        // display.print(iterTimer->seconds, DEC);
-      }
+      // display.print(iterTimer->seconds, DEC);
+    }
     //}
   }
 }
