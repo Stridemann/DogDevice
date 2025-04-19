@@ -43,4 +43,4 @@ Troubleshooting/Debug messages displayed:
    - Check ID in both devices (in menu). One device should have ID: 0, other device ID: 1.
    - Devices are too close to each other (less than 1 feet), in this case sometimes they are not able to communicate too.
 * Sync... - (after pressing a button) synchronization between devices. Hides after 1 sec. If not - read previous item.
-* Device is stuck. This problem was fixed, but this can happen when powering device using Type-C + mobile charger. There should be no issues by connecting Type-c to a computer via USB.
+* Device is stuck (not reacting on buttons and time doesn't updates). This problem was fixed, but this can happen when powering device using Type-C + mobile charger. There should be no issues by connecting Type-c to a computer via USB.
