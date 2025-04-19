@@ -222,6 +222,12 @@ void DrawMenu() {
   int16_t pos = 15;
   display.setCursor(pos-- * FONT_SIZE, 0);
   display.print(F("Menu"));
+  display.print(' ');
+  display.print(' ');
+  display.print(' ');
+  display.print(' ');
+  display.print(' ');
+  display.print(' ');
 
   display.setCursor(pos-- * FONT_SIZE, 0);
   if (menuPos == 1)
@@ -234,13 +240,16 @@ void DrawMenu() {
   display.print(' ');
   display.print(' ');
   display.print(' ');
+  display.print(' ');
+  display.print(' ');
+  display.print(' ');
 
   display.setCursor(pos-- * FONT_SIZE, 0);
   if (menuPos == 2)
     display.print(F(">"));
   else
     display.print(F(" "));
-  display.print(F("Red: "));
+  display.print(F("Red:"));
   display.print(minHoursRedLed, DEC);
   display.print(' ');
   display.print(' ');
@@ -252,7 +261,7 @@ void DrawMenu() {
     display.print(F(">"));
   else
     display.print(F(" "));
-  display.print(F("Id:"));
+  display.print(F("Id :"));
   display.print(clientId, DEC);
   display.print(' ');
   display.print(' ');
@@ -324,6 +333,24 @@ void DrawMenu() {
   display.print(' ');
   display.print(' ');
 
+
+  display.setCursor(pos-- * FONT_SIZE, 0);
+  display.print(' ');
+  display.print(' ');
+  display.print(' ');
+  display.print(' ');
+  display.print(' ');
+  display.print(' ');
+  display.print(' ');
+
+  display.setCursor(pos-- * FONT_SIZE, 0);
+  display.print(' ');
+  display.print(' ');
+  display.print(' ');
+  display.print(' ');
+  display.print(' ');
+  display.print(' ');
+  display.print(' ');
 
   display.setCursor(pos-- * FONT_SIZE, 0);
   display.print(' ');
