@@ -1,4 +1,4 @@
-Device for Arlington animal shelter to keep track dog feed time, etc.
+Device for Irving animal shelter to keep track dog feed time, etc.
 
 ![image](https://github.com/user-attachments/assets/f280f908-aaa5-4a76-998f-9f02889430af)
 
