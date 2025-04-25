@@ -38,7 +38,7 @@ To enter deviece menu hold first (top) button for 10+ seconds.
    - Ret: 1 - Amount of retries to synchronize time with other device
  
 ## Troubleshooting/Debug messages displayed:
-* Bad reaction on buttons - usualy this is because synchronization between devices is in progress.
+* Bad/slow/no reaction on buttons - usualy this is because synchronization between devices is in progress. Try to hold a button longer for this period of time (~1 sec)
 * Sync 0 - (on device start) initial time synchronization. Hides after 1 sec. If label do not hides after 5-7 sec this indicates issues in communication between devices:
    - Distance between devices is too big and radio transmitter power is not enough. Try increase "Pow" setting in device menu to 3.
    - Check ID in both devices (in menu). One device should have ID: 0, other device ID: 1.
