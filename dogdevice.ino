@@ -61,6 +61,7 @@ RHReliableDatagram manager(nrf24);
 uint8_t minHoursYellowLed = 2;
 uint8_t minHoursRedLed = 4;
 uint8_t powerMode = 4;
+uint8_t disableSync = 0;
 byte clientId = 0;
 int initialSyncing = 5;
 ///////////////////////////
@@ -68,6 +69,7 @@ const int E_ID = 0;
 const int E_YEL = 1;
 const int E_RED = 2;
 const int TRANS_POWER = 3;
+const int DISABLE_SYNC = 4;
 // Menu //////////
 bool menuOpened = false;
 byte menuPos = 0;
@@ -77,18 +79,21 @@ uint8_t recBuf[26];
 
 void setup() {
 
-  #ifdef USE_SERIAL
+#ifdef USE_SERIAL
   Serial.begin(38400);  // initialize serial bus
   while (!Serial)
     ;
   Serial.println(F("=============="));
   Serial.println(F("Init Start"));
-  #endif
+#endif
 
   clientId = EEPROM.read(E_ID);
   minHoursYellowLed = EEPROM.read(E_YEL);
   minHoursRedLed = EEPROM.read(E_RED);
   powerMode = EEPROM.read(TRANS_POWER);
+  disableSync = EEPROM.read(DISABLE_SYNC);
+  if (disableSync > 1)
+    disableSync = 0;
   manager.setThisAddress(clientId);
 #ifdef USE_SERIAL
   Serial.print(F("ClientId: "));
@@ -151,11 +156,16 @@ void loop() {
   } else {
     ApplyButtonsToTimers();
     DrawTimers();
-    CheckSynchronized();
+    if (disableSync != 1) {
+      CheckSynchronized();
+    }
   }
 
-  ProcessRadioCommon();
-  InitialSync();
+  if (disableSync != 1) {
+    ProcessRadioCommon();
+    InitialSync();
+  }
+
   // display.setCursor(1 * FONT_SIZE, 0);
   // if(millis() % 2000 < 1000)
   // display.print(111111, DEC);
@@ -283,6 +293,20 @@ void DrawMenu() {
   display.print(' ');
 
   display.setCursor(pos-- * FONT_SIZE, 0);
+  if (menuPos == 5)
+    display.print(F(">"));
+  else
+    display.print(F(" "));
+  display.print(F("NoSyn:"));
+  display.print(disableSync, DEC);
+  display.print(' ');
+  display.print(' ');
+  display.print(' ');
+  display.print(' ');
+  display.print(' ');
+  display.print(' ');
+
+  display.setCursor(pos-- * FONT_SIZE, 0);
   display.print(F("S:"));
   display.print(pingSent, DEC);
 
@@ -372,7 +396,7 @@ void DrawMenu() {
     menuPos--;
   }
 
-  if ((buttons[2].isPressedOnce || buttons[2].isLongPressed || buttons[2].isDoubleLongPressed) && menuPos < 4) {
+  if ((buttons[2].isPressedOnce || buttons[2].isLongPressed || buttons[2].isDoubleLongPressed) && menuPos < 5) {
     buttons[2].isPressedOnce = false;
     buttons[2].isPressedOnce = false;
     buttons[2].isLongPressed = false;
@@ -413,6 +437,12 @@ void DrawMenu() {
       } else {
         Serial.println(F("nrf24 setRF: Success!"));
       }
+    } else if (menuPos == 5) {
+      if (disableSync == 0)
+        disableSync = 1;
+      else
+        disableSync = 0;
+      EEPROM.write(DISABLE_SYNC, disableSync);
     }
   }
 
@@ -447,6 +477,12 @@ void DrawMenu() {
       } else {
         Serial.println(F("nrf24 setRF: Success!"));
       }
+    } else if (menuPos == 5) {
+      if (disableSync == 0)
+        disableSync = 1;
+      else
+        disableSync = 0;
+      EEPROM.write(DISABLE_SYNC, disableSync);
     }
   }
 }
@@ -682,15 +718,13 @@ void ApplyButtonsToTimers() {
       iterTimer->seconds = 0;
       iterTimer->minutes = 0;
       iterTimer->hours = 0;
-      isSynchronizing = true;
-      ClientSendTimers();
+      StartSyncTime();
     }
     if (iterButton->isLongPressed) {
       iterTimer->isEnabled = !iterTimer->isEnabled;
       iterButton->isLongPressed = false;
       if (initialSyncing <= 0) {
-        isSynchronizing = true;
-        ClientSendTimers();
+        StartSyncTime();
       }
     }
     if (iterButton->isDoubleLongPressed && i == 0) {
@@ -700,11 +734,23 @@ void ApplyButtonsToTimers() {
   }
 }
 
+void StartSyncTime() {
+  if (disableSync)
+    return;
+  isSynchronizing = true;
+  ClientSendTimers();
+}
+
 void CheckSynchronized() {
   if (!isSynchronizing)
     return;
   if (millis() - sendSyncTime > 2000) {
     syncRetries++;
+
+    if (syncRetries > 10) {
+      syncRetries = 0;
+      isSynchronizing = false;
+    }
 #ifdef USE_SERIAL
     Serial.print("Try sync with other device. Retry: ");
     Serial.println(syncRetries);
