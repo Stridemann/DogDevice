@@ -152,7 +152,9 @@ void loop() {
 
   if (menuOpened) {
     DrawMenu();
-    ProcessDebugPing();
+    if (disableSync == 0) {
+      ProcessDebugPing();
+    }
   } else {
     ApplyButtonsToTimers();
     DrawTimers();
@@ -297,7 +299,7 @@ void DrawMenu() {
     display.print(F(">"));
   else
     display.print(F(" "));
-  display.print(F("NoSyn:"));
+  display.print(F("NoSn:"));
   display.print(disableSync, DEC);
   display.print(' ');
   display.print(' ');
@@ -682,9 +684,8 @@ void ReadButtons() {
     } else {
       if (iterButton->isPressedHandler) {
         iterButton->isPressedHandler = false;
-
         auto holdTime = millis() - iterButton->holdMillis;
-        if (holdTime > 10000) {
+        if (holdTime > 3000) {
           iterButton->isDoubleLongPressed = true;
         } else if (holdTime > 2000) {
           iterButton->isLongPressed = true;
@@ -727,8 +728,13 @@ void ApplyButtonsToTimers() {
         StartSyncTime();
       }
     }
-    if (iterButton->isDoubleLongPressed && i == 0) {
-      iterButton->isDoubleLongPressed = false;
+  }
+
+  auto iterButton = &buttons[0];
+  if (iterButton->isDoubleLongPressed) {
+    iterButton->isDoubleLongPressed = false;
+    iterButton = &buttons[7];
+    if (iterButton->isPressedHandler) {
       OpenMenu();
     }
   }
@@ -868,16 +874,19 @@ void DrawTimers() {
     //}
   }
 
-  if (initialSyncing > 0) {
-    display.setCursor(0 * FONT_SIZE, 0);
-    display.print(F("Sync 0"));
-  } else if (isSynchronizing) {
-    display.setCursor(0 * FONT_SIZE, 0);
-    display.print(F("Sync..."));
-  } else {
-    display.setCursor(0 * FONT_SIZE, 0);
-    display.print(F("         "));
+  if (disableSync == 0) {
+    if (initialSyncing > 0) {
+      display.setCursor(0 * FONT_SIZE, 0);
+      display.print(F("Sync 0"));
+    } else if (isSynchronizing) {
+      display.setCursor(0 * FONT_SIZE, 0);
+      display.print(F("Sync..."));
+    } else {
+      display.setCursor(0 * FONT_SIZE, 0);
+      display.print(F("         "));
+    }
   }
+
 
   //display.setCursor(0 * FONT_SIZE, 0);
   //display.print(620, DEC);
